@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GreenPlate Share: interactive prototype</title>
+<style>
+:root{--bg:#eef1ee;--card:#fff;--text:#1d2a1f;--muted:#55645a;--brand:#2e7d32;--brandtxt:#fff;--line:#c9d3cb;--soft:#e7f2e8;--warn:#8b1a4a;--chip:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#121a14;--card:#1c2620;--text:#eaf1ec;--muted:#a7b6ab;--brand:#5fbf66;--brandtxt:#0b1a0d;--line:#33443a;--soft:#243a29;--warn:#e58bb0;--chip:#1c2620}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#121a14;--card:#1c2620;--text:#eaf1ec;--muted:#a7b6ab;--brand:#5fbf66;--brandtxt:#0b1a0d;--line:#33443a;--soft:#243a29;--warn:#e58bb0;--chip:#1c2620}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:420px;margin:0 auto;padding:10px 12px 24px}
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted);margin-bottom:8px}
+.bar button{min-height:36px}
+.seg button{border:1px solid var(--line);background:var(--card);color:var(--text);padding:6px 10px;font-size:13px}
+.seg button.on{background:var(--brand);color:var(--brandtxt);border-color:var(--brand)}
+.phone{background:var(--card);border:2px solid var(--line);border-radius:26px;padding:16px 16px 20px;min-height:600px;position:relative}
+h1{font-size:20px;margin:0 0 4px;color:var(--brand)}
+h2{font-size:18px;margin:0 0 8px}
+p{margin:0 0 10px}
+.muted{color:var(--muted);font-size:14px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;background:var(--soft);color:var(--text);border:1px dashed var(--brand);border-radius:6px;padding:1px 6px;margin-left:4px;vertical-align:middle}
+button{font:inherit;cursor:pointer;border-radius:12px}
+.btn{display:block;width:100%;min-height:48px;background:var(--brand);color:var(--brandtxt);border:0;font-weight:700;margin-top:10px}
+.btn.alt{background:var(--card);color:var(--text);border:2px solid var(--brand)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.link{background:none;border:0;color:var(--warn);text-decoration:underline;min-height:44px;padding:0 6px}
+.big{width:150px;height:150px;border-radius:50%;background:var(--brand);color:var(--brandtxt);border:0;font-size:56px;display:block;margin:18px auto 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
+.chip{min-height:44px;padding:8px 14px;border:2px solid var(--brand);background:var(--chip);color:var(--text);border-radius:22px}
+.chip[aria-pressed="true"]{background:var(--brand);color:var(--brandtxt)}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.photo{min-height:84px;font-size:34px;border:2px solid var(--line);background:var(--soft);color:var(--text)}
+.photo[aria-pressed="true"]{border-color:var(--brand);outline:3px solid var(--brand)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.row b{text-align:right}
+.card{border:2px solid var(--brand);background:var(--soft);border-radius:14px;padding:12px;margin:8px 0}
+.notif{background:#222;color:#fff;border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:14px;animation:in .4s}
+@keyframes in{from{transform:translateY(-12px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.notif{animation:none}}
+.qr{display:grid;grid-template-columns:repeat(9,1fr);width:150px;margin:10px auto;border:6px solid #fff;background:#fff}
+.qr i{aspect-ratio:1;background:#fff}.qr i.k{background:#000}
+.strip{background:var(--warn);color:#fff;border-radius:8px;padding:4px 10px;font-size:13px;margin-bottom:10px}
+.fb{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));min-height:48px;background:var(--warn);color:#fff;border:0;padding:0 16px;font-weight:700;box-shadow:0 2px 8px #0005}
+.modal{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.sheet{background:var(--card);color:var(--text);width:100%;max-width:420px;max-height:88%;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+textarea{width:100%;min-height:80px;font:inherit;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--bg);color:var(--text)}
+.rate{display:flex;gap:6px;margin:6px 0 10px}.rate button{flex:1;min-height:44px;border:2px solid var(--brand);background:var(--chip);color:var(--text)}.rate button.on{background:var(--brand);color:var(--brandtxt)}
+:focus-visible{outline:3px solid #f5a623;outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar" role="group" aria-label="Facilitator controls">
+    <span>Version:</span>
+    <span class="seg"><button id="vA" onclick="setV(false)">Original</button><button id="vB" onclick="setV(true)">Revised</button></span>
+    <button class="link" style="color:var(--text)" onclick="restart()">Restart</button>
+    <button class="link" style="color:var(--text)" onclick="about()">About / simulated</button>
+  </div>
+  <div class="phone" id="app" aria-live="polite"></div>
+</div>
+<button class="fb" onclick="feedback()">Feedback</button>
+<div id="modal"></div>
+<script>
+var S,tm;
+function fresh(keepV){var v=keepV===undefined?(location.hash==='#revised'):keepV;S={n:1,rev:v,photo:null,name:'',al:[],di:[],meals:3,counted:false,still:false,flag:null}}
+fresh();
+var PH=[['🍝','Veggie pasta'],['🍛','Chicken curry rice'],['🥗','Mixed salad box']];
+function $(i){return document.getElementById(i)}
+function go(n){S.n=n;render()}
+function setV(r){S.rev=r;try{location.hash=r?'revised':'original'}catch(e){}render()}
+function restart(){fresh(S.rev);render()}
+function tog(arr,v){var a=S[arr],i=a.indexOf(v);if(i>-1)a.splice(i,1);else a.push(v)}
+function al(v){if(v==='None of these'){S.al=S.al.indexOf(v)>-1?[]:[v]}else{S.al=S.al.filter(function(x){return x!=='None of these'});tog('al',v)}render()}
+function di(v){tog('di',v);render()}
+function chip(arr,v){var on=S[arr].indexOf(v)>-1;return '<button class="chip" aria-pressed="'+on+'" onclick="'+(arr==='al'?'al':'di')+'(\''+v+'\')">'+v+'</button>'}
+function contains(){var a=S.al.filter(function(x){return x!=='None of these'&&x!=='May contain traces'});return a.length?'Contains: '+a.join(', ').toLowerCase():'No listed allergens'}
+function tags(){var t=[contains()];if(S.al.indexOf('May contain traces')>-1)t.push('may contain traces');return t.concat(S.di.map(function(x){return x.toLowerCase()})).join(' · ')}
+function head(t,sub){return '<h1>GreenPlate Share</h1><p class="muted">'+(sub||'')+'</p><h2>'+t+'</h2>'}
+function back(n){return '<button class="link" style="color:var(--text)" onclick="go('+n+')">‹ Back</button>'}
+var V={
+1:function(){return head('Got food you can’t finish?','Dorm B, Level 2 Shelf · '+S.meals+' meals saved')+
+ '<button class="big" aria-label="Snap surplus food" onclick="go(2)">＋</button><p style="text-align:center"><b>Snap surplus food</b><br><span class="muted">takes about 30 seconds</span></p>'+
+ '<p class="muted" style="text-align:center">Signed in with campus login<span class="tag">SIMULATED</span><br>Others see “Anonymous giver”</p>'},
+2:function(){return back(1)+head('Snap your food')+'<p class="muted">Choose a sample photo<span class="tag">SIMULATED camera</span></p><div class="photos">'+PH.map(function(p,i){return '<button class="photo" aria-pressed="'+(S.photo===i)+'" aria-label="'+p[1]+'" onclick="S.photo='+i+';S.name=PH['+i+'][1];render()">'+p[0]+'</button>'}).join('')+'</div>'+
+ (S.photo!==null?'<div class="card"><b>Suggested: '+S.name+'</b><br><span class="muted">Name suggested by the app<span class="tag">SIMULATED</span></span></div>':'')+
+ '<button class="btn" '+(S.photo===null?'disabled':'')+' onclick="go(3)">Next</button>'},
+3:function(){var r=S.rev;return back(2)+head(r?'Contains:':'Allergens (required): tap all')+
+ '<div class="chips">'+['Dairy','Nuts','Gluten','Egg','Soy','Shellfish'].map(function(x){return chip('al',x)}).join('')+(r?chip('al','May contain traces'):'')+chip('al','None of these')+'</div>'+
+ '<h2>Details</h2><div class="chips">'+(r?['Made today','Vegetarian','Home-cooked','Sealed']:['Made today','Vegetarian']).map(function(x){return chip('di',x)}).join('')+'</div>'+
+ (r?'<p class="muted">Allergen information is declared by the giver and is not verified.</p>':'')+
+ '<button class="btn" '+(S.al.length?'':'disabled')+' onclick="go(4)">Next</button>'+(S.al.length?'':'<p class="muted" style="margin-top:8px">Choose at least one option to continue.</p>')},
+4:function(){return back(3)+head('Confirm listing')+
+ '<div class="row"><span>Item</span><b>'+S.name+'</b></div><div class="row"><span>Shelf</span><b>Level 2 common room</b></div><div class="row"><span>Pick-up</span><b>Next 2 hours</b></div><div class="row"><span>Expires</span><b>10:45 pm tonight</b></div><div class="row"><span>Tags</span><b>'+tags()+'</b></div><div class="row"><span>Posted as</span><b>Anonymous giver</b></div>'+
+ '<p class="muted" style="margin-top:8px">Defaults are pre-filled (location and time simulated). Tap a row to edit in a real build.</p><button class="btn" onclick="go(5)">List it</button>'},
+5:function(){var k='';for(var i=0;i<81;i++){var x=(i*7+Math.floor(i/9)*5)%11;k+='<i class="'+((x<5||i<20&&i%9<3)?'k':'')+'"></i>'}return head('Drop-off','Place the food on the Level 2 Share Shelf')+'<div class="qr" role="img" aria-label="Shelf QR code">'+k+'</div><p class="muted" style="text-align:center">Scan the shelf code to confirm<span class="tag">SIMULATED scan</span></p><button class="btn" onclick="go(6)">Simulate scan</button>'},
+6:function(){return '<div class="strip">Now showing a nearby student’s phone<span class="tag" style="background:#fff;color:#222">SIMULATED</span></div><div class="notif">GreenPlate · now<br><b>New nearby: '+S.name+'</b></div><div class="card"><b>'+S.name+'</b><br>'+tags()+
+ '<br><span class="muted">40 m away · Expires 10:45 pm</span><br><b>Time left: <span id="tm">1h 58m 00s</span></b><br>'+
+ (S.rev?'Last confirmed 6 min ago by a student at the shelf <button class="link" style="color:var(--text)" aria-label="What does this mean?" onclick="info()">ⓘ</button>':'Posted 6 min ago · Shelf checked: yes')+
+ '</div><button class="btn" onclick="go(7)">Claim (anonymous)</button><p class="muted" style="text-align:center">No chat. No contact details.</p>'},
+7:function(){return back(6)+head('At the shelf')+'<p>Is it there? Tap to help the next person.</p><button class="btn alt" onclick="S.still=true;render()">Still there? Tap at shelf</button>'+(S.still?'<p class="card">Thanks. Confirmed just now (simulated).</p>':'')+'<button class="btn" onclick="collect()">Scan to collect<span class="tag" style="background:#fff;color:#222">SIMULATED</span></button><div style="text-align:center"><button class="link" onclick="go(9)">'+(S.rev?'Report a mistake':'Flag a problem')+'</button></div>'},
+8:function(){return '<h1>Collected!</h1><p>Your '+S.name.toLowerCase()+' became someone’s meal.</p><div class="card" style="text-align:center"><b style="font-size:26px">'+S.meals+' meals saved</b><br>2.8 kg CO₂e avoided (estimate)<br><span class="muted">Counts collected meals only</span></div><button class="btn" onclick="relist()">List again</button><button class="btn alt" onclick="go(1)">Home</button><div style="text-align:center"><button class="link" onclick="go(9)">'+(S.rev?'Report a mistake':'Flag a problem')+'</button> <button class="link" onclick="how()">How flags work</button></div>'},
+9:function(){var done=S.flag;return back(7)+head(S.rev?'Report a mistake':'Flag a problem')+(S.rev?'<p class="card">Honest mistakes are never penalised.</p>':'')+
+ (done?'<div class="card"><b>Thanks.</b> The listing is paused and a student at the shelf is asked to confirm. Reports stay anonymous. Nothing is stored in this prototype.</div>':'<p>What is wrong?</p><div class="chips">'+['Item is missing','Information is wrong','Looks unsafe'].map(function(x){return '<button class="chip" onclick="S.flag=\''+x+'\';render()">'+x+'</button>'}).join('')+'</div>')+
+ '<div style="text-align:center"><button class="link" onclick="how()">How flags work</button></div>'}
+};
+function collect(){if(!S.counted){S.meals++;S.counted=true}go(8)}
+function relist(){S.photo=null;S.name='';S.al=[];S.di=[];S.still=false;S.flag=null;S.counted=false;go(2)}
+function modal(h){$('modal').innerHTML='<div class="modal" onclick="if(event.target===this)closeM()"><div class="sheet" role="dialog" aria-modal="true">'+h+'<button class="btn" onclick="closeM()">Close</button></div></div>'}
+function closeM(){$('modal').innerHTML=''}
+function info(){modal('<h2>Last confirmed</h2><p>A student at the shelf tapped “still there?” 6 minutes ago. It confirms the item was on the shelf. It does not verify allergens.</p>')}
+function how(){modal('<h2>How flags work</h2><p>Tell us if something is wrong. The listing is paused and another student at the shelf is asked to confirm. Honest mistakes carry no penalty. Students never see who reported. Your campus email is visible only to GreenPlate, and to hall staff in a safety incident.</p>')}
+function about(){modal('<h2>About this prototype</h2><p class="muted">Interactive demo with dummy data. Nothing is saved or sent. Simulated: camera and name suggestion, campus login, smart defaults, QR scan, notifications, receiver’s phone, shelf confirmation, incident log and impact data. Use the Original and Revised buttons to compare versions.</p>')}
+var FR={e:0,t:0};
+function feedback(){modal('<h2>Your feedback</h2><p class="muted">Screen S'+S.n+' · '+(S.rev?'Revised':'Original')+' version</p><p>How easy was this step? (1 to 5)</p><div class="rate" id="re">'+rate('e')+'</div><p>How much do you trust what you see? (1 to 5)</p><div class="rate" id="rt">'+rate('t')+'</div><p>What was unclear or missing?</p><textarea id="fbt" aria-label="Comments"></textarea><button class="btn alt" onclick="copyFb()">Copy my feedback</button><p class="muted" id="fbm">Nothing is sent. Copy it and give it to the facilitator.</p>')}
+function rate(k){var h='';for(var i=1;i<=5;i++)h+='<button class="'+(FR[k]===i?'on':'')+'" onclick="FR.'+k+'='+i+';var t=$(\'fbt\').value;feedback();$(\'fbt\').value=t">'+i+'</button>';return h}
+function copyFb(){var t='Screen S'+S.n+' ('+(S.rev?'Revised':'Original')+') | Ease '+FR.e+' | Trust '+FR.t+' | '+$('fbt').value;try{navigator.clipboard.writeText(t).then(function(){$('fbm').textContent='Copied.'},function(){$('fbt').value=t;$('fbt').select();$('fbm').textContent='Select and copy the text above.'})}catch(e){$('fbt').value=t;$('fbm').textContent='Select and copy the text above.'}}
+function render(){clearInterval(tm);$('app').innerHTML=V[S.n]();$('vA').className=S.rev?'':'on';$('vB').className=S.rev?'on':'';
+ if(S.n===6){var end=Date.now()+7080000;tm=setInterval(function(){var e=$('tm');if(!e)return;var s=Math.max(0,Math.floor((end-Date.now())/1000));e.textContent=Math.floor(s/3600)+'h '+('0'+Math.floor(s%3600/60)).slice(-2)+'m '+('0'+s%60).slice(-2)+'s'},1000)}
+ window.scrollTo(0,0)}
+render();
+</script>
+</body>
+</html>
